@@ -4,7 +4,7 @@
 
 Check out the deployed app on Heroku:
 
-https://ryan-busi.herokuapp.com/index.html
+https://mini-sales-management-paul.herokuapp.com/
 
 
 ### Concept:
