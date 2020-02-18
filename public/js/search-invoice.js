@@ -7,7 +7,7 @@ const resultContainerEl = document.getElementById("result-container");
 // adds click event to the button 'search'
 document
   .getElementById("search-btn")
-  .addEventListener("click", function(event) {
+  .addEventListener("click", function (event) {
     const searchByValue = searchByEl.value;
     if (searchStrEl.value === "") {
       // do thing if search term is blank
@@ -36,11 +36,11 @@ function showResultHTML(data, resultContainer) {
   // shows the result header which was hidden on page load
   resultHeaderEl.setAttribute("class", "container-fluid");
   const arrayData = [data];
-  const innerHTML = arrayData.map(function(invoice) {
+  const innerHTML = arrayData.map(function (invoice) {
     return `<div id=${invoice.id} class="row sub-report-text sub-report-row py-1 result-js">
                 <div class="col-3"> ${invoice.id}</div>
                 <div class="col-3"> ${invoice.salesorder_id}</div>
-                <div class="col-3"> ${invoice.createdAt}</div>
+                <div class="col-3"> ${moment(invoice.createdAt).format('MM/DD/YYYY')}</div>
                 <div class="col-3 text-right"> ${invoice.total_amount}</div>
             </div>`;
   });
@@ -48,7 +48,7 @@ function showResultHTML(data, resultContainer) {
   // add click event to each record of results
   const resultEl = document.querySelectorAll(".result-js");
   for (let i = 0; i < resultEl.length; i++) {
-    resultEl[i].addEventListener("click", function(event) {
+    resultEl[i].addEventListener("click", function (event) {
       const id = event.target.parentElement.getAttribute("id");
       sessionStorage.setItem("id", id);
       console.log("id: ", id);

@@ -82,7 +82,7 @@ axios.get(`/api/invoices/${invoiceID}`).then(invoice => {
 
       // UPDAGE INVOICE WITH PAYMENT ADJUSTMENT
       // - insert into table payment the with invoice ID
-      updateBtn.addEventListener("click", function() {
+      updateBtn.addEventListener("click", function () {
         const payAdjEl = document.getElementById("pay-amount");
         if (payAdjEl.value === "0" || payAdjEl.value === "") {
           // do nothing if user didn't enter anything or leave blank
@@ -148,10 +148,10 @@ deleteBtn.addEventListener("click", () => {
 
 function renderPayments(data, paymentSubReportContainer) {
   // shows the result header which was hidden on page load
-  const innerHTML = data.map(function(payment) {
+  const innerHTML = data.map(function (payment) {
     return `<div class="row sub-report-text sub-report-row py-1">
                 <div class="col-2 col-sm-2 col-md-2 text-center">${payment.invoice_id}</div>
-                <div class="col-4">${payment.createdAt}</div>
+                <div class="col-4">${moment(payment.createdAt).format('MM/DD/YYYY')}</div>
                 <div class="col-6 text-right"> ${payment.amount} </div>
               </div>`;
   });
