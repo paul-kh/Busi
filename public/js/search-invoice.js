@@ -37,7 +37,7 @@ function showResultHTML(data, resultContainer) {
   resultHeaderEl.setAttribute("class", "container-fluid");
   const arrayData = [data];
   const innerHTML = arrayData.map(function (invoice) {
-    return `<div id=${invoice.id} class="row sub-report-text sub-report-row py-1 result-js">
+    return `<div id=${invoice.id} class="row sub-report-text sub-report-row py-1  hyper-link-look result-js">
                 <div class="col-3"> ${invoice.id}</div>
                 <div class="col-3"> ${invoice.salesorder_id}</div>
                 <div class="col-3"> ${moment(invoice.createdAt).format('MM/DD/YYYY')}</div>

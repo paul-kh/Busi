@@ -7,7 +7,7 @@ const resultContainerEl = document.getElementById("result-container");
 // adds click event to the button 'search'
 document
   .getElementById("search-btn")
-  .addEventListener("click", function(event) {
+  .addEventListener("click", function (event) {
     const searchByValue = searchByEl.value;
     if (searchStrEl.value === "" || !parseInt(searchStrEl.value)) {
       // do thing if search term is blank or not a number
@@ -42,8 +42,8 @@ document
 function showResultHTML(data, resultContainer) {
   // shows the result header which was hidden on page load
   resultHeaderEl.setAttribute("class", "container-fluid");
-  const innerHTML = data.map(function(order) {
-    return `<div id=${order.id} class="row sub-report-text sub-report-row py-1 results-js">
+  const innerHTML = data.map(function (order) {
+    return `<div id=${order.id} class="row sub-report-text sub-report-row py-1 hyper-link-look results-js">
                       <div class="col-2">${order.id}</div>
                       <div class="col-2">${order.customer_id}</div>
                       <div class="col-6"> ${order.description} </div>
@@ -54,7 +54,7 @@ function showResultHTML(data, resultContainer) {
   // add click event to each record of results
   const resultEls = document.querySelectorAll(".results-js");
   for (let i = 0; i < resultEls.length; i++) {
-    resultEls[i].addEventListener("click", function(event) {
+    resultEls[i].addEventListener("click", function (event) {
       const id = event.target.parentElement.getAttribute("id");
       sessionStorage.setItem("id", id);
       console.log(sessionStorage.getItem("id"));

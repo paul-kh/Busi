@@ -245,3 +245,8 @@ li a:hover:not(.active) {
     transform:translateX(25%);
   }
 }
+
+.hyper-link-look {
+  cursor: pointer;
+  color: blue;
+}
