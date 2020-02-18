@@ -4,13 +4,22 @@ const searchByEl = document.getElementById("search-by");
 const resultHeaderEl = document.getElementById("result-header");
 const resultContainerEl = document.getElementById("result-container");
 
+function showAllRecords() {
+  axios.get("/api/invoices/").then(res => {
+    console.log("all invoices: ", res.data);
+    showResultHTML(res.data, resultContainerEl)
+  });
+}
+showAllRecords();
+
+
 // adds click event to the button 'search'
 document
   .getElementById("search-btn")
   .addEventListener("click", function (event) {
     const searchByValue = searchByEl.value;
     if (searchStrEl.value === "") {
-      // do thing if search term is blank
+      showAllRecords();
     } else {
       switch (searchByValue) {
         case "Invoice Number":
@@ -35,8 +44,8 @@ document
 function showResultHTML(data, resultContainer) {
   // shows the result header which was hidden on page load
   resultHeaderEl.setAttribute("class", "container-fluid");
-  const arrayData = [data];
-  const innerHTML = arrayData.map(function (invoice) {
+  // const arrayData = [data];
+  const innerHTML = data.map(function (invoice) {
     return `<div id=${invoice.id} class="row sub-report-text sub-report-row py-1  hyper-link-look result-js">
                 <div class="col-3"> ${invoice.id}</div>
                 <div class="col-3"> ${invoice.salesorder_id}</div>

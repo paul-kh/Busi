@@ -4,17 +4,17 @@ const Op = db.Sequelize.Op;
 
 module.exports = {
   // function for creating a new customer
-  postCustomerApi: async function(req, res) {
+  postCustomerApi: async function (req, res) {
     const dbCustomer = await db.Customer.create(req.body);
     res.json(dbCustomer);
   },
   // function for creating a new sales order
-  postOrderApi: async function(req, res) {
+  postOrderApi: async function (req, res) {
     const dbOrder = await db.Order.create(req.body);
     res.json(dbOrder);
   },
   // function for creating a new invoice
-  postInvoiceApi: async function(req, res) {
+  postInvoiceApi: async function (req, res) {
     const dbInvoice = await db.Invoice.create(req.body);
     const salesorderId = dbInvoice.dataValues.salesorder_id;
     // automatically assign the amount of the invoice based on the amount of the given sales order
@@ -27,7 +27,7 @@ module.exports = {
     res.json(dbInvoice);
   },
   // function for creating a new payment
-  postPaymentApi: async function(req, res) {
+  postPaymentApi: async function (req, res) {
     const dbPayment = await db.Payment.create(req.body);
     const invoiceId = dbPayment.dataValues.invoice_id;
     // after a new payment is created, grab all the payments for the given invoice and calculate how much has been paid toward that invoice
@@ -53,18 +53,18 @@ module.exports = {
     );
     res.json(dbPayment);
   },
-  api: function(app) {
+  api: function (app) {
     // Get all customers
-    app.get("/api/customers", function(req, res) {
-      db.Customer.findAll({}).then(function(dbCustomers) {
+    app.get("/api/customers", function (req, res) {
+      db.Customer.findAll({}).then(function (dbCustomers) {
         res.json(dbCustomers);
       });
     });
 
     // Get a customer
-    app.get("/api/customers/:id", function(req, res) {
+    app.get("/api/customers/:id", function (req, res) {
       console.log({ id: req.params.id });
-      db.Customer.findAll({ where: { id: req.params.id } }).then(function(
+      db.Customer.findAll({ where: { id: req.params.id } }).then(function (
         dbCustomers
       ) {
         console.log(dbCustomers);
@@ -93,23 +93,23 @@ module.exports = {
     app.post("/api/customers", this.postCustomerApi);
 
     // Update a customer
-    app.put("/api/customers/:id", function(req, res) {
+    app.put("/api/customers/:id", function (req, res) {
       // using the isNull function from the Underscore javascript library
       if (!_.isNull(req.body.name)) {
         db.Customer.update(
           { name: req.body.name },
           { where: { id: req.params.id } }
-        ).then(function(dbCustomer) {
+        ).then(function (dbCustomer) {
           if (req.body.address) {
             db.Customer.update(
               { address: req.body.address },
               { where: { id: req.params.id } }
-            ).then(function(dbCustomer) {
+            ).then(function (dbCustomer) {
               if (req.body.phone_number) {
                 db.Customer.update(
                   { phone_number: req.body.phone_number },
                   { where: { id: req.params.id } }
-                ).then(function(dbCustomer) {
+                ).then(function (dbCustomer) {
                   res.json(dbCustomer);
                 });
               } else {
@@ -120,7 +120,7 @@ module.exports = {
             db.Customer.update(
               { phone_number: req.body.phone_number },
               { where: { id: req.params.id } }
-            ).then(function(dbCustomer) {
+            ).then(function (dbCustomer) {
               res.json(dbCustomer);
             });
           } else {
@@ -131,12 +131,12 @@ module.exports = {
         db.Customer.update(
           { address: req.body.address },
           { where: { id: req.params.id } }
-        ).then(function(dbCustomer) {
+        ).then(function (dbCustomer) {
           if (req.body.phone_number) {
             db.Customer.update(
               { phone_number: req.body.phone_number },
               { where: { id: req.params.id } }
-            ).then(function(dbCustomer) {
+            ).then(function (dbCustomer) {
               res.json(dbCustomer);
             });
           } else {
@@ -147,15 +147,15 @@ module.exports = {
         db.Customer.update(
           { phone_number: req.body.phone_number },
           { where: { id: req.params.id } }
-        ).then(function(dbCustomer) {
+        ).then(function (dbCustomer) {
           res.json(dbCustomer);
         });
       }
     });
 
     // Delete a customer by id
-    app.delete("/api/customers/:id", function(req, res) {
-      db.Customer.destroy({ where: { id: req.params.id } }).then(function(
+    app.delete("/api/customers/:id", function (req, res) {
+      db.Customer.destroy({ where: { id: req.params.id } }).then(function (
         dbCustomer
       ) {
         res.json(dbCustomer);
@@ -163,16 +163,16 @@ module.exports = {
     });
 
     // Get all sales orders
-    app.get("/api/salesorders", function(req, res) {
-      db.Order.findAll({}).then(function(dbOrder) {
+    app.get("/api/salesorders", function (req, res) {
+      db.Order.findAll({}).then(function (dbOrder) {
         res.json(dbOrder);
       });
     });
 
     // Get a sales order
-    app.get("/api/salesorders/:id", function(req, res) {
+    app.get("/api/salesorders/:id", function (req, res) {
       console.log({ id: req.params.id });
-      db.Order.findAll({ where: { id: req.params.id } }).then(function(
+      db.Order.findAll({ where: { id: req.params.id } }).then(function (
         dbOrders
       ) {
         console.log(dbOrders);
@@ -184,22 +184,22 @@ module.exports = {
     app.post("/api/salesorders", this.postOrderApi);
 
     // Update a sales order
-    app.put("/api/salesorders/:id", function(req, res) {
+    app.put("/api/salesorders/:id", function (req, res) {
       if (req.body.customer_id) {
         db.Order.update(
           { customer_id: req.body.customer_id },
           { where: { id: req.params.id } }
-        ).then(function(dbOrder) {
+        ).then(function (dbOrder) {
           if (req.body.description) {
             db.Order.update(
               { description: req.body.description },
               { where: { id: req.params.id } }
-            ).then(function(dbOrder) {
+            ).then(function (dbOrder) {
               if (req.body.amount) {
                 db.Order.update(
                   { amount: req.body.amount },
                   { where: { id: req.params.id } }
-                ).then(function(dbOrder) {
+                ).then(function (dbOrder) {
                   res.json(dbOrder);
                 });
               } else {
@@ -210,7 +210,7 @@ module.exports = {
             db.Order.update(
               { amount: req.body.amount },
               { where: { id: req.params.id } }
-            ).then(function(dbOrder) {
+            ).then(function (dbOrder) {
               res.json(dbOrder);
             });
           } else {
@@ -221,12 +221,12 @@ module.exports = {
         db.Order.update(
           { description: req.body.description },
           { where: { id: req.params.id } }
-        ).then(function(dbOrder) {
+        ).then(function (dbOrder) {
           if (req.body.amount) {
             db.Order.update(
               { amount: req.body.amount },
               { where: { id: req.params.id } }
-            ).then(function(dbOrder) {
+            ).then(function (dbOrder) {
               res.json(dbOrder);
             });
           } else {
@@ -237,15 +237,15 @@ module.exports = {
         db.Order.update(
           { amount: req.body.amount },
           { where: { id: req.params.id } }
-        ).then(function(dbOrder) {
+        ).then(function (dbOrder) {
           res.json(dbOrder);
         });
       }
     });
 
     // Delete a sales order by id
-    app.delete("/api/salesorders/:id", function(req, res) {
-      db.Order.destroy({ where: { id: req.params.id } }).then(function(
+    app.delete("/api/salesorders/:id", function (req, res) {
+      db.Order.destroy({ where: { id: req.params.id } }).then(function (
         dbOrder
       ) {
         res.json(dbOrder);
@@ -253,20 +253,20 @@ module.exports = {
     });
 
     // Get all invoices
-    app.get("/api/invoices", function(req, res) {
-      db.Invoice.findAll({}).then(function(dbInvoice) {
-        res.json(dbInvoice);
+    app.get("/api/invoices", function (req, res) {
+      db.Invoice.findAll({}).then(function (invoices) {
+        res.json(invoices);
       });
     });
 
     // Get an invoice
-    app.get("/api/invoices/:id", function(req, res) {
+    app.get("/api/invoices/:id", function (req, res) {
       console.log({ id: req.params.id });
-      db.Invoice.findAll({ where: { id: req.params.id } }).then(function(
-        dbInvoices
+      db.Invoice.findAll({ where: { id: req.params.id } }).then(function (
+        dbInvoice
       ) {
-        console.log(dbInvoices);
-        res.json(dbInvoices[0]);
+        console.log(dbInvoice);
+        res.json(dbInvoice);
       });
     });
 
@@ -274,22 +274,22 @@ module.exports = {
     app.post("/api/invoices", this.postInvoiceApi);
 
     // Update an invoice
-    app.put("/api/invoices/:id", function(req, res) {
+    app.put("/api/invoices/:id", function (req, res) {
       if (req.body.salesorder_id) {
         db.Invoice.update(
           { salesorder_id: req.body.salesorder_id },
           { where: { id: req.params.id } }
-        ).then(function(dbInvoice) {
+        ).then(function (dbInvoice) {
           if (req.body.discount) {
             // if we are updating the discount, we have to reevaluate whether the invoice has been paid in full
-            db.Invoice.findAll({ where: { id: req.params.id } }).then(function(
+            db.Invoice.findAll({ where: { id: req.params.id } }).then(function (
               dbInvoices
             ) {
               let isPaid;
               if (
                 dbInvoices[0].total_amount -
-                  req.body.discount -
-                  dbInvoices[0].amount_paid >
+                req.body.discount -
+                dbInvoices[0].amount_paid >
                 0
               ) {
                 isPaid = false;
@@ -299,7 +299,7 @@ module.exports = {
               db.Invoice.update(
                 { discount: req.body.discount, paid: isPaid },
                 { where: { id: req.params.id } }
-              ).then(function(dbInvoice) {
+              ).then(function (dbInvoice) {
                 res.json(dbInvoice);
               });
             });
@@ -308,15 +308,15 @@ module.exports = {
           }
         });
       } else if (req.body.discount) {
-        db.Invoice.findAll({ where: { id: req.params.id } }).then(function(
+        db.Invoice.findAll({ where: { id: req.params.id } }).then(function (
           dbInvoices
         ) {
           // if we are updating the discount, we have to reevaluate whether the invoice has been paid in full
           let isPaid;
           if (
             dbInvoices[0].total_amount -
-              req.body.discount -
-              dbInvoices[0].amount_paid >
+            req.body.discount -
+            dbInvoices[0].amount_paid >
             0
           ) {
             isPaid = false;
@@ -326,7 +326,7 @@ module.exports = {
           db.Invoice.update(
             { discount: req.body.discount, paid: isPaid },
             { where: { id: req.params.id } }
-          ).then(function(dbInvoice) {
+          ).then(function (dbInvoice) {
             res.json(dbInvoice);
           });
         });
@@ -334,8 +334,8 @@ module.exports = {
     });
 
     // Delete an invoice by id
-    app.delete("/api/invoices/:id", function(req, res) {
-      db.Invoice.destroy({ where: { id: req.params.id } }).then(function(
+    app.delete("/api/invoices/:id", function (req, res) {
+      db.Invoice.destroy({ where: { id: req.params.id } }).then(function (
         dbInvoice
       ) {
         res.json(dbInvoice);
@@ -343,16 +343,16 @@ module.exports = {
     });
 
     // Get all payments
-    app.get("/api/payments", function(req, res) {
-      db.Payment.findAll({}).then(function(dbPayment) {
+    app.get("/api/payments", function (req, res) {
+      db.Payment.findAll({}).then(function (dbPayment) {
         res.json(dbPayment);
       });
     });
 
     // Get a payment
-    app.get("/api/payments/:id", function(req, res) {
+    app.get("/api/payments/:id", function (req, res) {
       console.log({ id: req.params.id });
-      db.Payment.findAll({ where: { id: req.params.id } }).then(function(
+      db.Payment.findAll({ where: { id: req.params.id } }).then(function (
         dbPayments
       ) {
         console.log(dbPayments);
@@ -364,9 +364,9 @@ module.exports = {
     app.post("/api/payments", this.postPaymentApi);
 
     // Update a payment
-    app.put("/api/payments/:id", function(req, res) {
+    app.put("/api/payments/:id", function (req, res) {
       if (req.body.invoice_id) {
-        db.Payment.findAll({ where: { id: req.params.id } }).then(function(
+        db.Payment.findAll({ where: { id: req.params.id } }).then(function (
           dbPayment
         ) {
           // if we are changing the invoice to which a payment is applied, we have to recalculate how much has been paid on the original invoice as well as the new one, as well as determine whether they both have been paid in full
@@ -374,21 +374,21 @@ module.exports = {
           db.Payment.update(
             { invoice_id: req.body.invoice_id },
             { where: { id: req.params.id } }
-          ).then(function(dbPayment) {
+          ).then(function (dbPayment) {
             db.Payment.findAll({ where: { invoice_id: oldInvoiceId } }).then(
-              function(dbPayments) {
+              function (dbPayments) {
                 let totalPaid = 0;
                 for (let i = 0; i < dbPayments.length; i++) {
                   const amount = parseFloat(dbPayments[i].amount);
                   totalPaid = totalPaid + amount;
                 }
                 db.Invoice.findAll({ where: { id: oldInvoiceId } }).then(
-                  function(dbInvoices) {
+                  function (dbInvoices) {
                     let isPaid;
                     if (
                       dbInvoices[0].total_amount -
-                        dbInvoices[0].discount -
-                        totalPaid >
+                      dbInvoices[0].discount -
+                      totalPaid >
                       0
                     ) {
                       isPaid = false;
@@ -399,10 +399,10 @@ module.exports = {
                     db.Invoice.update(
                       { amount_paid: totalPaid, paid: isPaid },
                       { where: { id: oldInvoiceId } }
-                    ).then(function(dbInvoice) {
+                    ).then(function (dbInvoice) {
                       db.Payment.findAll({
                         where: { invoice_id: req.body.invoice_id }
-                      }).then(function(dbPayments) {
+                      }).then(function (dbPayments) {
                         let totalPaid = 0;
                         for (let i = 0; i < dbPayments.length; i++) {
                           const amount = parseFloat(dbPayments[i].amount);
@@ -410,12 +410,12 @@ module.exports = {
                         }
                         db.Invoice.findAll({
                           where: { id: req.body.invoice_id }
-                        }).then(function(dbInvoices) {
+                        }).then(function (dbInvoices) {
                           let isPaid;
                           if (
                             dbInvoices[0].total_amount -
-                              dbInvoices[0].discount -
-                              totalPaid >
+                            dbInvoices[0].discount -
+                            totalPaid >
                             0
                           ) {
                             isPaid = false;
@@ -425,20 +425,20 @@ module.exports = {
                           db.Invoice.update(
                             { amount_paid: totalPaid, paid: isPaid },
                             { where: { id: req.body.invoice_id } }
-                          ).then(function(dbInvoice) {
+                          ).then(function (dbInvoice) {
                             if (req.body.amount) {
                               // if changing the amount of a payment, reevaluate how much has been paid toward that invoice and whether it has been paid in full
                               db.Payment.update(
                                 { amount: req.body.amount },
                                 { where: { id: req.params.id } }
-                              ).then(function(dbPayment) {
+                              ).then(function (dbPayment) {
                                 db.Payment.findAll({
                                   where: { id: req.params.id }
-                                }).then(function(dbPayment) {
+                                }).then(function (dbPayment) {
                                   const invoiceId = dbPayment[0].invoice_id;
                                   db.Payment.findAll({
                                     where: { invoice_id: invoiceId }
-                                  }).then(function(dbPayments) {
+                                  }).then(function (dbPayments) {
                                     let totalPaid = 0;
                                     for (
                                       let i = 0;
@@ -452,12 +452,12 @@ module.exports = {
                                     }
                                     db.Invoice.findAll({
                                       where: { id: invoiceId }
-                                    }).then(function(dbInvoices) {
+                                    }).then(function (dbInvoices) {
                                       let isPaid;
                                       if (
                                         dbInvoices[0].total_amount -
-                                          dbInvoices[0].discount -
-                                          totalPaid >
+                                        dbInvoices[0].discount -
+                                        totalPaid >
                                         0
                                       ) {
                                         isPaid = false;
@@ -470,7 +470,7 @@ module.exports = {
                                           paid: isPaid
                                         },
                                         { where: { id: invoiceId } }
-                                      ).then(function(dbInvoice) {
+                                      ).then(function (dbInvoice) {
                                         res.json(dbPayment);
                                       });
                                     });
@@ -495,26 +495,26 @@ module.exports = {
         db.Payment.update(
           { amount: req.body.amount },
           { where: { id: req.params.id } }
-        ).then(function(dbPayment) {
-          db.Payment.findAll({ where: { id: req.params.id } }).then(function(
+        ).then(function (dbPayment) {
+          db.Payment.findAll({ where: { id: req.params.id } }).then(function (
             dbPayment
           ) {
             const invoiceId = dbPayment[0].invoice_id;
             db.Payment.findAll({ where: { invoice_id: invoiceId } }).then(
-              function(dbPayments) {
+              function (dbPayments) {
                 let totalPaid = 0;
                 for (let i = 0; i < dbPayments.length; i++) {
                   const amount = parseFloat(dbPayments[i].amount);
                   totalPaid = totalPaid + amount;
                 }
-                db.Invoice.findAll({ where: { id: invoiceId } }).then(function(
+                db.Invoice.findAll({ where: { id: invoiceId } }).then(function (
                   dbInvoices
                 ) {
                   let isPaid;
                   if (
                     dbInvoices[0].total_amount -
-                      dbInvoices[0].discount -
-                      totalPaid >
+                    dbInvoices[0].discount -
+                    totalPaid >
                     0
                   ) {
                     isPaid = false;
@@ -524,7 +524,7 @@ module.exports = {
                   db.Invoice.update(
                     { amount_paid: totalPaid, paid: isPaid },
                     { where: { id: invoiceId } }
-                  ).then(function(dbInvoice) {
+                  ).then(function (dbInvoice) {
                     res.json(dbPayment);
                   });
                 });
@@ -536,23 +536,23 @@ module.exports = {
     });
 
     // Delete a payment by id
-    app.delete("/api/payments/:id", function(req, res) {
-      db.Payment.findAll({ where: { id: req.params.id } }).then(function(
+    app.delete("/api/payments/:id", function (req, res) {
+      db.Payment.findAll({ where: { id: req.params.id } }).then(function (
         dbPayment
       ) {
         // after deleting a payment, we have to reevaluate how much has been paid toward an invoice and whether it has been paid in full
         const invoiceId = dbPayment[0].invoice_id;
-        db.Payment.destroy({ where: { id: req.params.id } }).then(function(
+        db.Payment.destroy({ where: { id: req.params.id } }).then(function (
           dbPayment
         ) {
           db.Payment.findAll({ where: { invoice_id: invoiceId } }).then(
-            function(dbPayments) {
+            function (dbPayments) {
               let totalPaid = 0;
               for (let i = 0; i < dbPayments.length; i++) {
                 const amount = parseFloat(dbPayments[i].amount);
                 totalPaid = totalPaid + amount;
               }
-              db.Invoice.findAll({ where: { id: invoiceId } }).then(function(
+              db.Invoice.findAll({ where: { id: invoiceId } }).then(function (
                 dbInvoices
               ) {
                 let isPaid;
@@ -567,7 +567,7 @@ module.exports = {
                 db.Invoice.update(
                   { amount_paid: totalPaid, paid: isPaid },
                   { where: { id: invoiceId } }
-                ).then(function(dbInvoice) {
+                ).then(function (dbInvoice) {
                   res.json(dbPayment);
                 });
               });
