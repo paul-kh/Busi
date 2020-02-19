@@ -1,5 +1,5 @@
 const invoiceID = sessionStorage.getItem("id");
-console.log(invoiceID);
+console.log("Invoice id: ", invoiceID);
 // button elements
 const pdfBtn = document.getElementById("pdf-btn");
 const deleteBtn = document.getElementById("delete-btn");
@@ -81,7 +81,7 @@ axios.get(`/api/invoices/${invoiceID}`).then(invoice => {
           "$" + (totalInvoiceAmt - totalPaid - discountAmt);
       }
 
-      // UPDAGE INVOICE WITH PAYMENT ADJUSTMENT
+      // UPDATE INVOICE WITH PAYMENT ADJUSTMENT
       // - insert into table payment the with invoice ID
       updateBtn.addEventListener("click", function () {
         const payAdjEl = document.getElementById("pay-amount");
@@ -133,11 +133,27 @@ deleteBtn.addEventListener("click", () => {
     `Are you about to delete the invoice with ID: ${invoiceID}. Are you sure???`
   );
   if (userAnswer === true) {
-    axios.delete(`/api/invoices/${invoiceID}`).then(res => {
-      alert(`The invoice ${invoiceID} is deleted successfully!`);
-      // redirect to the page "search-invoice.html"
-      window.location.href = "./search-invoice.html";
-    });
+    axios.delete(`/api/invoices/${invoiceID}`)
+      .then(inv => {
+        console.log("Delete invoice: ", inv);
+        axios.get("/api/payments")
+          .then(payments => {
+            // Get payment records that belong to the invoice ID
+            const payRecords = payments.data.filter(pay => pay.invoice_id === parseInt(invoiceID));
+            const paymentIDs = payRecords.map(p => p.id);
+            console.log("payment IDs: ", paymentIDs);
+            // Delete each payment by looping through the array paymentIDs
+            for (let i = 0; i < paymentIDs.length; i++) {
+              axios.delete(`/api/payments/${paymentIDs[i]}`).then(res => {
+                console.log("Deletion response: ", res);
+              });
+            }
+
+            alert(`The invoice ${invoiceID} is deleted successfully!`);
+            // redirect to the page "search-invoice.html"
+            window.location.href = "./search-invoice.html";
+          })
+      });
   } else {
     // do nothing when user cancelled deletion
   }
