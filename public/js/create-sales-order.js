@@ -1,11 +1,12 @@
 const accountEl = document.getElementById("account");
 const descriptionEl = document.getElementById("description");
 const amountEl = document.getElementById("amount");
+const newCustomerContainer = document.getElementById("new-customer-container");
 // const msgRow = document.getElementById("msg-row");
 // const salesOrderContainer = document.getElementById("new-customer-container");
 
 // Add click event to the button "Create"
-document.getElementById("create-btn").addEventListener("click", function() {
+document.getElementById("create-btn").addEventListener("click", function () {
   if (
     accountEl.value === "" ||
     descriptionEl.value === "" ||
@@ -30,22 +31,40 @@ document.getElementById("create-btn").addEventListener("click", function() {
             description: descriptionEl.value,
             amount: amountEl.value
           })
-          .then(function(res) {
+          .then(function (res) {
             console.log(res);
             // showResultHTML(res.data, newCustomerContainer);
             // // clears error message
             // msgRow.setAttribute("class", "d-none");
             // // resets all inputs
-            alert("order is created successfully!");
+            showResultHTML(res.data, newCustomerContainer)
             accountEl.value = "";
             descriptionEl.value = "";
             amountEl.value = "";
             accountEl.focus();
           })
-          .catch(function(err) {
+          .catch(function (err) {
             console.log(err);
           });
       }
     });
   }
 });
+
+function showResultHTML(data, resultContainer) {
+  resultContainer.setAttribute("class", "container-fluid");
+  // ## new row to show newly created customer
+  const newCustomerEl = document.createElement("div");
+  newCustomerEl.setAttribute(
+    "class",
+    "row sub-report-text sub-report-row py-1"
+  );
+  newCustomerEl.innerHTML = ` <div class="col-2"> ${data.id} </div>
+                            <div class="col-2"> ${data.customer_id} </div>
+                            <div class="col-6"> ${data.description}</div>
+                            <div class="col-2 text-right"> ${data.amount}</div>`;
+
+  resultContainer.appendChild(newCustomerEl);
+}
+
+
