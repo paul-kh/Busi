@@ -32,10 +32,11 @@ document
         // default is 'Sales Order Number'
         default:
           axios
-            .get(
-              `/invoices/search-by-salesorder/${parseInt(searchStrEl.value)}`
-            )
-            .then(res => showResultHTML(res.data, resultContainerEl));
+            .get("/api/invoices")
+            .then(invoices => {
+              const newInvoiceData = invoices.data.filter(i => i.salesorder_id === parseInt(searchStrEl.value));
+              showResultHTML(newInvoiceData, resultContainerEl)
+            });
       }
     }
   });
