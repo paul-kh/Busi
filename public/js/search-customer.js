@@ -4,13 +4,21 @@ const searchByEl = document.getElementById("search-by");
 const resultHeaderEl = document.getElementById("result-header");
 const resultContainerEl = document.getElementById("result-container");
 
+function showAllRecords() {
+  axios.get("/api/customers/").then(res => {
+    console.log("all customers: ", res.data);
+    showResultHTML(res.data, resultContainerEl)
+  });
+}
+showAllRecords();
+
 // adds click event to the button 'search'
 document
   .getElementById("search-btn")
   .addEventListener("click", function (event) {
     const searchByValue = searchByEl.value;
     if (searchStrEl.value === "") {
-      // do thing if search term is blank
+      showAllRecords();
     } else {
       switch (searchByValue) {
         case "Customer name":
