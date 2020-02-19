@@ -9,21 +9,28 @@ const orderSubReportContainer = document.getElementById("order-sub-report");
 
 // search sales order
 searchBtnEl.addEventListener("click", e => {
-  axios.get(`/api/salesorders/${orderIdEl.value}`).then(res => {
-    console.log(res);
-    if (res.data.length === 0) {
-      alert(
-        `The sales order number ${orderIdEl.value} that you entered DOES NOT EXIST!`
-      );
+  axios.get(`/api/salesorders/${orderIdEl.value}`).then(order => {
+    console.log(order);
+    if (order.data.length === 0) {
+      alert(`The sales order number ${orderIdEl.value} that you entered DOES NOT EXIST!`);
       orderIdEl.focus();
     } else {
-      // show sub reports
-      // render sub reports: sales order & payment
-      renderSalesOrder(res.data[0], orderSubReportContainer);
-      // generate invoice
+      axios.get("/api/invoices").then(invoice => {
+        // check if the order was issued with an existing invoice once already
+        const existingInvoice = invoice.data.filter(invoice => invoice.salesorder_id === parseInt(orderIdEl.value));
+        if (existingInvoice.length > 0) {
+          alert(`Sorry, we cannot generate invoice with this sales order ${orderIdEl.value}! \nThe sales order was billed once already with inovice # ${existingInvoice[0].id}.`);
+          // console.log("invoices: ", existingInvoice);
+        } else {
+          // show sub reports
+          // render sub reports: sales order & payment
+          renderSalesOrder(order.data[0], orderSubReportContainer);
+          // generate invoice
 
-      generateInvoice();
-      // print PDF
+          generateInvoice();
+          // print PDF
+        }
+      })
     }
   });
 });
@@ -50,7 +57,7 @@ function generateInvoice() {
           amount_paid: payAmountEl.value,
           discount: discountAmountEl.value
         })
-        .then(function(inv) {
+        .then(function (inv) {
           // insert into payment table
           console.log("invoice: ", inv);
           axios
@@ -58,7 +65,7 @@ function generateInvoice() {
               invoice_id: inv.data.id,
               amount: payAmountEl.value
             })
-            .then(function(pmt) {
+            .then(function (pmt) {
               console.log("Payment: ", pmt);
               // update invoice summary
               axios.get(`/api/salesorders/${orderIdEl.value}`).then(order => {
