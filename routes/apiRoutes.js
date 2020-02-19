@@ -16,11 +16,41 @@ module.exports = {
   // function for creating a new invoice
   postInvoiceApi: async function (req, res) {
     const dbInvoice = await db.Invoice.create(req.body);
+    const salesorderId = dbInvoice.dataValues.salesorder_id;
+    // automatically assign the amount of the invoice based on the amount of the given sales order
+    const dbOrders = await db.Order.findAll({ where: { id: salesorderId } });
+    const amount = dbOrders[0].amount;
+    const dbInvoice2 = await db.Invoice.update(
+      { total_amount: amount },
+      { where: { id: dbInvoice.dataValues.id } }
+    );
     res.json(dbInvoice);
   },
   // function for creating a new payment
   postPaymentApi: async function (req, res) {
     const dbPayment = await db.Payment.create(req.body);
+    const invoiceId = dbPayment.dataValues.invoice_id;
+    // after a new payment is created, grab all the payments for the given invoice and calculate how much has been paid toward that invoice
+    const dbPayments = await db.Payment.findAll({
+      where: { invoice_id: invoiceId }
+    });
+    let totalPaid = 0;
+    for (let i = 0; i < dbPayments.length; i++) {
+      const amount = parseFloat(dbPayments[i].amount);
+      totalPaid = totalPaid + amount;
+    }
+    const dbInvoices = await db.Invoice.findAll({ where: { id: invoiceId } });
+    // evaluate whether the invoice has been paid in full
+    let isPaid;
+    if (dbInvoices[0].total_amount - req.body.discount - totalPaid > 0) {
+      isPaid = false;
+    } else {
+      isPaid = true;
+    }
+    const dbInvoice = await db.Invoice.update(
+      { amount_paid: totalPaid, paid: isPaid },
+      { where: { id: invoiceId } }
+    );
     res.json(dbPayment);
   },
   api: function (app) {
@@ -33,9 +63,11 @@ module.exports = {
 
     // Get a customer
     app.get("/api/customers/:id", function (req, res) {
+      console.log({ id: req.params.id });
       db.Customer.findAll({ where: { id: req.params.id } }).then(function (
         dbCustomers
       ) {
+        console.log(dbCustomers);
         res.json(dbCustomers);
       });
     });
@@ -59,6 +91,7 @@ module.exports = {
 
     // Create a new customer
     app.post("/api/customers", this.postCustomerApi);
+
     // Update a customer
     app.put("/api/customers/:id", function (req, res) {
       // using the isNull function from the Underscore javascript library
@@ -138,9 +171,11 @@ module.exports = {
 
     // Get a sales order
     app.get("/api/salesorders/:id", function (req, res) {
+      console.log({ id: req.params.id });
       db.Order.findAll({ where: { id: req.params.id } }).then(function (
         dbOrders
       ) {
+        console.log(dbOrders);
         res.json(dbOrders);
       });
     });
@@ -226,15 +261,18 @@ module.exports = {
 
     // Get an invoice
     app.get("/api/invoices/:id", function (req, res) {
+      console.log({ id: req.params.id });
       db.Invoice.findAll({ where: { id: req.params.id } }).then(function (
         dbInvoice
       ) {
+        console.log(dbInvoice);
         res.json(dbInvoice);
       });
     });
 
     // Create a new invoice
     app.post("/api/invoices", this.postInvoiceApi);
+
     // Update an invoice
     app.put("/api/invoices/:id", function (req, res) {
       if (req.body.salesorder_id) {
