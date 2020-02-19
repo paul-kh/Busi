@@ -19,28 +19,29 @@ document.getElementById("invoice-number").innerHTML =
 
 // render sales order sub report
 axios.get(`/api/invoices/${invoiceID}`).then(invoice => {
-  console.log(invoice);
-  const orderID = invoice.data.salesorder_id;
-  console.log(orderID);
+  console.log("invoiced by id: ", invoice);
+  const orderID = invoice.data[0].salesorder_id;
+  console.log("order id: ", orderID);
   // INVOICE FOOTER
-  discount = invoice.data.discount;
+  discount = invoice.data[0].discount;
   if (discount === null) {
     discount = 0;
   }
   axios.get("/api/salesorders").then(order => {
     console.log("order: ", order);
     // INVOICE FOOTER
-    totalInvoiceAmt = order.data[0].amount;
-    const results = [];
-    for (let i = 0; i < order.data.length; i++) {
-      if (order.data[i].id === parseInt(orderID)) {
-        results.push(order.data[i]);
-        // totalPaidAmt = totalPaidAmt + parseFloat(invoice.data[i].amount);
-      }
-    }
-    console.log(results);
+
+    const foundOrder = order.data.filter(o => o.id === parseInt(orderID));
+    totalInvoiceAmt = foundOrder[0].amount;
+    // for (let i = 0; i < order.data.length; i++) {
+    //   if (order.data[i].id === parseInt(orderID)) {
+    //     foundOrders.push(order.data[i]);
+    //     // totalPaidAmt = totalPaidAmt + parseFloat(invoice.data[i].amount);
+    //   }
+    // }
+    console.log("foundOrder: ", foundOrder);
     // console.log("total paid: ", totalPaidAmt);
-    renderSalesOrder(results[0], orderSubReportContainer);
+    renderSalesOrder(foundOrder[0], orderSubReportContainer);
 
     // render payments
     // - get payments from table payment based on invoice ID
