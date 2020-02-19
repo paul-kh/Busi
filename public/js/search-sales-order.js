@@ -4,13 +4,21 @@ const searchByEl = document.getElementById("search-by");
 const resultHeaderEl = document.getElementById("result-header");
 const resultContainerEl = document.getElementById("result-container");
 
+function showAllRecords() {
+  axios.get("/api/salesorders/").then(res => {
+    console.log("all salesorders: ", res.data);
+    showResultHTML(res.data, resultContainerEl)
+  });
+}
+showAllRecords();
+
 // adds click event to the button 'search'
 document
   .getElementById("search-btn")
   .addEventListener("click", function (event) {
     const searchByValue = searchByEl.value;
     if (searchStrEl.value === "" || !parseInt(searchStrEl.value)) {
-      // do thing if search term is blank or not a number
+      showAllRecords();
     } else {
       switch (searchByValue) {
         case "Order Number":
